@@ -1,6 +1,11 @@
-const server = require('fastify')({ logger: true });
+import Fastify from 'fastify';
 const PORT = process.env.PORT || 4000;
 const HOST = process.env.HOST || '127.0.0.1';
+
+const server = Fastify({
+    logger: true
+});
+
 
 server.get('/recipes/:id', async (req, res) => {
     const id = Number(req.params.id);
