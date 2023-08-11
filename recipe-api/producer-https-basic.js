@@ -1,10 +1,18 @@
 import Fastify from 'fastify';
+import fs from 'fs';
 
-const PORT = process.env.PORT || 4000;
-const HOST = process.env.HOST || '127.0.0.1';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const server = Fastify({
-    logger: true
+    logger: true,
+    https: {
+        key: fs.readFileSync(`${__dirname}/tls/producer-private-key.key`),
+        cert: fs.readFileSync(`${__dirname}/../shared/tls/producer-certificate.cert`)
+    }
 });
 
 server.get('/recipes/:id', async (req, res) => {
@@ -31,6 +39,9 @@ server.get('/recipes/:id', async (req, res) => {
         }
     };
 });
+
+const PORT = process.env.PORT || 4000;
+const HOST = process.env.HOST || '127.0.0.1';
 
 try {
     server.listen({ port: PORT, host: HOST })
